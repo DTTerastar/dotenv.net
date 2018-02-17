@@ -29,27 +29,24 @@ namespace dotenv.net
             }
 
             // read all lines from the env file
-            string dotEnvContents = File.ReadAllText(filePath, encoding);
+            var dotEnvContents = File.ReadAllText(filePath, encoding);
             
             // split the long string into an array of rows
-            string[] dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
+            var dotEnvRows = dotEnvContents.Split(new[] {"\n", "\r\n", Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries);
             
             // loop through rows, split into key and value then add to enviroment
             foreach (var dotEnvRow in dotEnvRows)
             {
-                int index = dotEnvRow.IndexOf( "=" );
+                var index = dotEnvRow.IndexOf( "=", StringComparison.Ordinal );
 
                 if ( index >= 0 )
                 {
-                    string key = dotEnvRow.Substring( 0, index).Trim();
-                    string value = dotEnvRow.Substring( index + 1, dotEnvRow.Length - ( index + 1) ).Trim();
+                    var key = dotEnvRow.Substring( 0, index).Trim();
+                    var value = dotEnvRow.Substring( index + 1, dotEnvRow.Length - ( index + 1) ).Trim();
                 
-                    if ( key.Length > 0 ){
-                        if ( value.Length == 0 ){
-                            Environment.SetEnvironmentVariable( key, null );
-                        } else {
-                            Environment.SetEnvironmentVariable( key, value );
-                        }
+                    if ( key.Length > 0 )
+                    {
+                        Environment.SetEnvironmentVariable(key, value.Length == 0 ? null : value);
                     }
                 }
             }
